@@ -45,31 +45,32 @@ for j in range(final):
     for l in range(25):
         sum[j] += int(numbers[(j*25)+l])
 
-print(numbers[(40*25):(40*25)+25])
+for i, call in enumerate(new):
+    for k in range(final):
+        try:
+            temp = numbers[(k*25):(k*25)+25].index(call)
+        except ValueError:
+            temp = -1
+        if temp != -1:
+            index[k] += " " + str(temp)
+            sum[k] -= int(numbers[(k*25)+temp])
 
-def fun():
-    for i, call in enumerate(new):
-        for k in range(final):
-            try:
-                temp = numbers[(k*25):(k*25)+25].index(call)
-            except ValueError:
-                temp = -1
-            if temp != -1:
-                if k == 40:
-                   print(call)
-                index[k] += " " + str(temp)
-                sum[k] -= int(numbers[(k*25)+temp])
+        what = index[k].split()
+        if checkBingo(what):
+            if len(bruh) == 100:
+                print("---------------")
+                print("Winning bingo card: ")
+                print("-- Last called number: " + call)
+                print("-- Sum: " + str(sum[k]))
+                print("-- Result: " + str(sum[k] * int(call)))
+                print("---------------")
 
-            what = index[k].split()
-            if checkBingo(what):
-                if len(bruh) == 1:
-                    if k == bruh[0]:
-                        print("------------")
-                        print("Last called number: " + call)
-                        print("Sum: " + str(sum[k]))
-                        return
-                if k in bruh:
-                    bruh.remove(k)
-            
-fun()
-print(bruh[0])
+            if len(bruh) == 1:
+                if k == bruh[0]:
+                    print("Squid winning bingo card: ")
+                    print("-- Last called number: " + call)
+                    print("-- Sum: " + str(sum[k]))
+                    print("-- Result: " + str(sum[k] * int(call)))
+                    print("---------------")
+            if k in bruh:
+                bruh.remove(k)
