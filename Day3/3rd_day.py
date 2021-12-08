@@ -1,25 +1,77 @@
+input = open("3rd_day_input.txt")
 
-trueCount = 0
-falseCount = 0
-gamma = 0
-epsilon = 0
+oxygen = []
+nitrogen = []
+def filterList(index, char, list):
+    result = []
+    for item in list:
+        if item[index] == char:
+            result.append(item)
+    return result
 
-for i in range(11):
-    input = open("3rd_day_input.txt", "r")
-    print(str(i))
-    for line in input:
-        if line[11-i] == str(1):
-            trueCount += 1
+def getBiggerSum(listToFilter):
+    ones = [0]*12
+    zeros = [0]*12
+    for item in listToFilter:
+        for i, char in enumerate(item):
+            if char == '1':
+                ones[i] += 1
+            else:
+                zeros[i] += 1
+    return ones, zeros
+
+gamma = ""
+epsilon = ""
+ones = [0]*12
+zeros = [0]*12
+oxy = ""
+nitro = ""
+for item in input:
+    nitrogen.append(item.rstrip("\n"))
+    oxygen.append(item.rstrip("\n"))
+    for i, char in enumerate(item.rstrip("\n")):
+        if char == '1':
+            ones[i] += 1
         else:
-             falseCount += 1
-    if trueCount > falseCount:
-        print("Is bigger on index " + str(11-i) + "! True: " + str(trueCount) + ", false: " + str(falseCount))
-        gamma += 2**(11-i)
-    trueCount = 0
-    falseCount = 0
+            zeros[i] += 1
+
+for i in range(12):
+    if ones[i] > zeros[i]:
+        gamma += '1'
+        epsilon += '0'
+    else:
+        gamma += '0'
+        epsilon += '1'
 
 
-epsilon = ~gamma & ((1 << 12) - 1)
-print(format(gamma, "#014b"))
-print(format(epsilon, "#014b"))
-print(str(gamma) + " * " + str(epsilon) + " = " + str(gamma*epsilon))
+oxyOnes, oxyZeros = getBiggerSum(oxygen)
+nitroOnes, nitroZeros = getBiggerSum(nitrogen)
+
+for i in range(12):
+    if oxyOnes[i] == oxyZeros[i]:
+        oxygen = filterList(i, '1', oxygen)
+    elif oxyOnes[i] > oxyZeros[i]:
+        if len(oxygen) > 1:
+            oxygen = [item for item in oxygen if item not in filterList(i, '0', oxygen)]
+    else:
+        if len(oxygen) > 1:
+            oxygen = [item for item in oxygen if item not in filterList(i, '1', oxygen)]
+    oxyOnes, oxyZeros = getBiggerSum(oxygen)
+
+    if nitroOnes[i] == nitroZeros[i]:
+        nitrogen = filterList(i, '0', nitrogen)
+    elif nitroOnes[i] < nitroZeros[i]:
+        if len(nitrogen) > 1:
+            nitrogen = [item for item in nitrogen if item not in filterList(i, '0', nitrogen)]
+    else:
+        if len(nitrogen) > 1:
+            nitrogen = [item for item in nitrogen if item not in filterList(i, '1', nitrogen)]
+
+    nitroOnes, nitroZeros = getBiggerSum(nitrogen)
+
+result = int(gamma, 2) * int(epsilon, 2)
+print("Part 1: " + str(int(gamma,2)) + " * " + str(int(epsilon,2)) + " = " + str(result))
+
+
+result = int(oxygen[0], 2) * int(nitrogen[0], 2)
+print("Part 2: " + str(int(oxygen[0], 2)) + " * " + str(int(nitrogen[0], 2)) + " = "  + str(result))
