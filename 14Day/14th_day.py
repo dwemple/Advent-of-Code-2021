@@ -39,10 +39,10 @@ for i, item in enumerate(counterD):
     counterD[i].append(0)
 
 
-def addLetterCount(letter):
+def addLetterCount(letter, x):
     for i in range(len(counterS)):
         if counterS[i][0] == letter:
-            counterS[i][1] += 1
+            counterS[i][1] += x
 
 def addSyllableCount(syllable):
     for i in range(len(counterD)):
@@ -55,31 +55,30 @@ for i in range(len(firstline)):
     for x, item in enumerate(counterD):
         if counterD[x][0] == d:
             counterD[x][2] += 1
-    addLetterCount(firstline[i])
-
-for _ in range(10):
-    newCounter = [[i for i in row] for row in counterD]
-    for i in range(len(newCounter)):
-        newCounter[i][2] = 0
-    for i in range(len(rules) // 2):
+    addLetterCount(firstline[i],1)
+def nyom(part):
+    for _ in range(part):
+        newCounter = [[i for i in row] for row in counterD]
+        for i in range(len(newCounter)):
+            newCounter[i][2] = 0
         for x in range(len(newCounter)):
-            if counterD[x][2] > 0 and counterD[x][0] == rules[i*2]:
+            if counterD[x][2] > 0:
                 many = counterD[x][2]
-                for _ in range(many):
-                    counterD[x][2] -= 1
-                    a = counterD[x][0][0] + rules[i*2+1]
-                    b = rules[i*2+1] + counterD[x][0][1]
-                    newCounter[addSyllableCount(a)][2] += 1
-                    newCounter[addSyllableCount(b)][2] += 1
-                    addLetterCount(rules[i*2+1])
-    for i in range(len(newCounter)):
-        counterD[i][2] = newCounter[i][2]
+                counterD[x][2] = 0
+                a = counterD[x][0][0] + counterD[x][1]
+                b = counterD[x][1] + counterD[x][0][1]
+                newCounter[addSyllableCount(a)][2] += many
+                newCounter[addSyllableCount(b)][2] += many
+                addLetterCount(counterD[x][1], many)
+        for i in range(len(newCounter)):
+            counterD[i][2] = newCounter[i][2]
+    final = []
+    for i, item in enumerate(counterS):
+        final.append(counterS[i][1])
+    return final
 
-final = []
-for i, item in enumerate(counterS):
-    final.append(counterS[i][1])
+part1 = nyom(10)
+part2 = nyom(40)
 
-max = max(final)
-min = min(final)
-
-print(str(max) + " - " + str(min) + " = " + str(max-min))
+print(str(max(part1)) + " - " + str(min(part1)) + " = " + str(max(part1)-min(part1)))
+print(str(max(part2)) + " - " + str(min(part2)) + " = " + str(max(part2)-min(part2)))
