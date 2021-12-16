@@ -41,6 +41,8 @@ def hexToBin(hexadeciaml):
     return binary
 
 ban = hexToBin(hex)
+total, result = 0 ,0
+rList = []
 
 def binToDec(binary):
     if binary == "":
@@ -48,75 +50,39 @@ def binToDec(binary):
     else:
         return int(binary,2)
 
-#print(ban)
-bList = []
-rList = []
-total, result = 0 ,0
-
-def doMagic(x):
-    print(rList)
-    print(bList)
-
+def doMagic(x, y):
+    newList = []
+    for i in y:
+        for item in i: 
+            newList.append(item)
     result = 0
-    if len(rList) > 1:
-        if x == 0:
-            for value in rList:
-                result += value
-        elif x == 1:
-            result = rList[0]
-            for r, value in enumerate(rList):
-                if r != 0:
-                    result *= value
-        elif x == 2:
-            result = min(rList)
-        elif x == 3:
-            result = max(rList)
-        elif x == 5:
-            if rList[0] > rList[1]:
-                result = 1
-            else:
-                result = 0
-        elif x == 6:
-            if rList[0] < rList[1]:
-                result = 1
-            else:
-                result = 0
-        elif x == 7:
-            if rList[0] == rList[1]:
-                result = 1
-            else:
-                result = 0
-        rList.clear()
-    else:
-        if x == 0:
-            for value in bList:
-                result += value
-        elif x == 1:
-            print(bList)
-            result = bList[0]
-            for r, value in enumerate(bList):
-                if r != 0:
-                    result *= value
-        elif x == 2:
-            result = min(bList)
-        elif x == 3:
-            result = max(bList)
-        elif x == 5:
-            if bList[0] > bList[1]:
-                result = 1
-            else:
-                result = 0
-        elif x == 6:
-            if bList[0] < bList[1]:
-                result = 1
-            else:
-                result = 0
-        elif x == 7:
-            if bList[0] == bList[1]:
-                result = 1
-            else:
-                result = 0
-    bList.clear()
+    if x == 0:
+        for value in newList:
+            result += value
+    elif x == 1:
+        result = newList[0]
+        for r, value in enumerate(newList):
+            if r != 0:
+                result *= value
+    elif x == 2:
+        result = min(newList)
+    elif x == 3:
+        result = max(newList)
+    elif x == 5:
+        if newList[0] > newList[1]:
+            result = 1
+        else:
+            result = 0
+    elif x == 6:
+        if newList[0] < newList[1]:
+            result = 1
+        else:
+            result = 0
+    elif x == 7:
+        if newList[0] == newList[1]:
+            result = 1
+        else:
+            result = 0
     return result
 
 def getValue(string):
@@ -133,15 +99,13 @@ def getValue(string):
     return lenght+6, ret, binToDec(sum)
 
 def chopchop(binary):
-    global total, result, bList
+    global total, result
+    bList, tempList = [], []
     ret = ""
     lenght = 0
     packetV = binToDec(binary[0:3])
     packetT = binToDec(binary[3:6])
-    total += packetV
-    print("Packet value: " + str(packetV) + ", " + binary[0:3])
-    print("Packet type: " + str(packetT) + ", " + binary[3:6])
-    print("---")
+    total += packetV # part 1
     if packetT == 4:
         binary = binary[6:]
         lenght, ret, temperino = getValue(binary)
@@ -154,9 +118,11 @@ def chopchop(binary):
             copyr = binary
             copyl = lenght
             while lenght > 0:
-                delet, binary = chopchop(binary)
+                delet, binary, temp = chopchop(binary)
+                bList.append(temp)
                 lenght -= delet
-            rList.append(doMagic(packetT))
+            tempList.append(doMagic(packetT, bList))
+            bList = tempList.copy()
             ret = copyr[copyl:]
             lenght = copyl+22
         else:
@@ -165,18 +131,18 @@ def chopchop(binary):
             delet = 18
             binary = binary[delet:]
             for _ in range(count):
-                delet, binary = chopchop(binary)
+                delet, binary, temp = chopchop(binary)
+                bList.append(temp)
                 lenght += delet
             # Packet types
-            rList.append(doMagic(packetT))
+            tempList.append(doMagic(packetT, bList))
+            bList = tempList.copy()
             lenght += 18
             ret = binary
-
-    return lenght, ret
+    return lenght, ret, bList
 
 print("-------- Part 1 --------")
-chopchop(ban)
-print("------------------------")
+_, _, rList = chopchop(ban)
 print("Sum of version numbers: " + str(total))
 print("-------- Part 2 --------")
-print("Result is: " + str(rList))
+print("Result is: " + str(rList[0]))

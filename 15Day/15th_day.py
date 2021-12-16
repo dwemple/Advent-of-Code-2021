@@ -23,7 +23,7 @@ def idk(r,c, back, path=[]):
     if c - 1 > 0 and back != "left":
         leftV = matrix[r][c-1]
     if c + 1 < 10 and back != "right":
-        rightV = matrix[r][c+1]*
+        rightV = matrix[r][c+1]
     return idk
 
 
