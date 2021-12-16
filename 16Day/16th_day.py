@@ -40,7 +40,7 @@ def hexToBin(hexadeciaml):
             binary += "1111"
     return binary
 
-ban = hexToBin(hex)
+ban = hexToBin(hex.upper())
 total, result = 0 ,0
 rList = []
 
@@ -90,7 +90,7 @@ def getValue(string):
     ret, sum = "",""
     i = 0
     for x in range(len(string)//5):
-        sum += string[x*5:5+x*5]
+        sum += string[x*5+1:5+x*5] # AND FUCK THIS + 1 MANNNNNNN
         if string[x*5] == '0':
             break
         i += 1
@@ -99,7 +99,7 @@ def getValue(string):
     return lenght+6, ret, binToDec(sum)
 
 def chopchop(binary):
-    global total, result
+    global total
     bList, tempList = [], []
     ret = ""
     lenght = 0
@@ -122,7 +122,6 @@ def chopchop(binary):
                 bList.append(temp)
                 lenght -= delet
             tempList.append(doMagic(packetT, bList))
-            bList = tempList.copy()
             ret = copyr[copyl:]
             lenght = copyl+22
         else:
@@ -136,9 +135,10 @@ def chopchop(binary):
                 lenght += delet
             # Packet types
             tempList.append(doMagic(packetT, bList))
-            bList = tempList.copy()
             lenght += 18
             ret = binary
+        bList.clear
+        bList = tempList.copy()
     return lenght, ret, bList
 
 print("-------- Part 1 --------")
